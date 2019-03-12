@@ -27,7 +27,7 @@ func Test_loc2addr(t *testing.T) {
 
 func Test_addr2loc(t *testing.T) {
 	api := NewBaiduLbsApi("0T3dbQsKaAxfsZfskEDm0OvMVANgTqmf")
-	lng, lat, err := api.Addr2Loc("", "广东省广州市白云区同和街道石握路56号")
+	lng, lat, err := api.Addr2Loc("", "北京市海淀区上地十街10号")
 	if err != nil {
 		fmt.Println(err)
 		return
