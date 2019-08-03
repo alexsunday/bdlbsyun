@@ -34,3 +34,13 @@ func Test_addr2loc(t *testing.T) {
 	}
 	fmt.Println(lng, lat)
 }
+
+func Test_Ip2Addr(t *testing.T) {
+	api := NewBaiduLbsApi("0T3dbQsKaAxfsZfskEDm0OvMVANgTqmf")
+
+	addr, err := api.IpLocation("61.242.40.97")
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(addr)
+}

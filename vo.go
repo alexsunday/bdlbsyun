@@ -145,3 +145,23 @@ type SuggestionRet struct {
 	Message string             `json:"message"`
 	Result  []SuggestionResult `json:"result"`
 }
+
+type IpLocationResponse struct {
+	Address string `json:"address"`
+	Status int `json:"status"`
+	Content struct{
+		Address string `json:"address"`
+		Point struct{
+			X string `json:"x"`
+			Y string `json:"y"`
+		} `json:"point"`
+		AddressDetail struct{
+			City string `json:"city"`
+			CityCode int `json:"city_code"`
+			District string `json:"district"`
+			Province string `json:"province"`
+			Street string `json:"street"`
+			StreetNumber string `json:"street_number"`
+		} `json:"address_detail"`
+	} `json:"content"`
+}

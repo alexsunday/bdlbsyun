@@ -62,6 +62,55 @@ func (api *BaiduLbsApi) call(serviceName, subService, version string, params map
 	return nil
 }
 
+
+func (api *BaiduLbsApi) callWithoutVersion(serviceName, subService string, params map[string]string, template interface{}) error {
+	params["ak"] = api.Ak
+	temp := "?"
+	for key, value := range params {
+		temp += key + "=" + value + "&"
+	}
+	queryString := temp[0 : len(temp)-1]
+	url := fmt.Sprintf("http://%s/%s/%s%s",
+		API_SERVER, serviceName, subService, queryString)
+	response, err := http.Get(url)
+	defer response.Body.Close()
+	if err != nil {
+		return err
+	}
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+	// fmt.Println(string(body))
+	// 解码过程，并检测相关可能存在的错误
+	if err := json.Unmarshal(body, &template); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (api* BaiduLbsApi) IpLocation(ip string) (addr string, err error) {
+	if ip == "" {
+		return "", fmt.Errorf("empty ip address")
+	}
+	params := make(map[string]string)
+	params["ip"] = ip
+	params["coor"] = "bd09ll"
+
+	var resp = &IpLocationResponse{}
+	resp.Status = -1
+	err = api.callWithoutVersion("location", "ip", params, &resp)
+	if err != nil {
+		return
+	}
+
+	if resp.Status != 0 {
+		return "", fmt.Errorf("api response not match zero")
+	}
+
+	return resp.Content.Address, nil
+}
+
 func (api *BaiduLbsApi) GeoConvert(lng, lat float64, from, to string) (rlng, rlat float64, err error) {
 	params := make(map[string]string)
 	params["coords"] = fmt.Sprintf("%v,%v", lng, lat)
