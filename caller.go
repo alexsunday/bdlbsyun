@@ -62,7 +62,6 @@ func (api *BaiduLbsApi) call(serviceName, subService, version string, params map
 	return nil
 }
 
-
 func (api *BaiduLbsApi) callWithoutVersion(serviceName, subService string, params map[string]string, template interface{}) error {
 	params["ak"] = api.Ak
 	temp := "?"
@@ -111,6 +110,29 @@ func (api* BaiduLbsApi) IpLocation(ip string) (addr string, err error) {
 	return resp.Content.Address, nil
 }
 
+func (api *BaiduLbsApi) GeoConvertStr(lng, lat string, from, to string) (rlng, rlat float64, err error) {
+	params := make(map[string]string)
+	params["coords"] = fmt.Sprintf("%s,%s", lng, lat)
+	params["from"] = from
+	params["to"] = to
+
+	result, err := api.Geoconv(params)
+	if err != nil {
+		return
+	}
+
+	if result.Status != 0 {
+		err = errors.New("baidu lbs cloud response error, status not zero")
+		return
+	}
+
+	if len(result.Result) != 1 {
+		err = errors.New("baidu lbs cloud response error, content empty")
+	}
+
+	return result.Result[0].X, result.Result[0].Y, nil
+}
+
 func (api *BaiduLbsApi) GeoConvert(lng, lat float64, from, to string) (rlng, rlat float64, err error) {
 	params := make(map[string]string)
 	params["coords"] = fmt.Sprintf("%v,%v", lng, lat)
@@ -123,12 +145,12 @@ func (api *BaiduLbsApi) GeoConvert(lng, lat float64, from, to string) (rlng, rla
 	}
 
 	if result.Status != 0 {
-		err = errors.New("baidu lbs cloud response error, status not zero.")
+		err = errors.New("baidu lbs cloud response error, status not zero")
 		return
 	}
 
 	if len(result.Result) != 1 {
-		err = errors.New("baidu lbs cloud response error, content empty.")
+		err = errors.New("baidu lbs cloud response error, content empty")
 	}
 
 	rlng = result.Result[0].X
