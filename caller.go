@@ -184,12 +184,12 @@ func (api *BaiduLbsApi) Addr2Loc(city, addr string) (lng, lat float64, err error
 
 	result, ok := res.(*GeoEncoderRet)
 	if !ok {
-		err = errors.New("api return nil pointer.")
+		err = errors.New("api return nil pointer")
 		return
 	}
 
 	if result.Status != 0 {
-		err = errors.New("baidu lbs cloud response error, status not zero.")
+		err = errors.New("baidu lbs cloud response error, status not zero")
 		return
 	}
 
@@ -197,6 +197,33 @@ func (api *BaiduLbsApi) Addr2Loc(city, addr string) (lng, lat float64, err error
 	lat = result.Result.Location.Lat
 	return
 }
+
+func (api *BaiduLbsApi) Loc2AddrViaStr(lng, lat string, coordType string) (result *GeocoderRet, err error) {
+	params := make(map[string]string)
+	params["coordtype"] = coordType
+	params["location"] = fmt.Sprintf("%s,%s", lat, lng)
+	params["output"] = "json"
+	params["latest_admin"] = "1"
+
+	res, err := api.Geocoding(params)
+	if err != nil {
+		return
+	}
+
+	result, ok := res.(*GeocoderRet)
+	if !ok {
+		err = errors.New("api return nil pointer")
+		return
+	}
+
+	if result.Status != 0 {
+		err = errors.New("baidu lbs cloud response error, status not zero")
+		return
+	}
+
+	return
+}
+
 
 func (api *BaiduLbsApi) Loc2Addr(lng, lat float64) (result *GeocoderRet, err error) {
 	params := make(map[string]string)
